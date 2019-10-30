@@ -1,14 +1,14 @@
 import
-  ospaths
+  os
 
 template thisModuleFile: string = instantiationInfo(fullPaths = true).filename
 
-when fileExists(thisModuleFile.parentDir / "src/nimhttpdpkg/config.nim"):
+when system.fileExists(thisModuleFile.parentDir / "src/srv/config.nim"):
   # In the git repository the Nimble sources are in a ``src`` directory.
-  import src/nimhttpdpkg/config
+  import src/srvpkg/config
 else:
   # When the package is installed, the ``src`` directory disappears.
-  import nimhttpdpkg/config
+  import src/srvpkg/config
 
 
 # Package
@@ -17,7 +17,7 @@ version       = pkgVersion
 author        = pkgAuthor
 description   = pkgDescription
 license       = "MIT"
-bin           = @["nimhttpd"]
+bin           = @["srv"]
 srcDir        = "src"
 installExt    = @["nim"]
 
@@ -26,29 +26,29 @@ installExt    = @["nim"]
 requires "nim >= 0.20.0"
 
 const compile = "nim c -d:release"
-const linux_x64 = "--cpu:amd64 --os:linux -o:nimhttpd"
-const windows_x64 = "--cpu:amd64 --os:windows -o:nimhttpd.exe"
-const macosx_x64 = "-o:nimhttpd"
-const program = "nimhttpd"
-const program_file = "src/nimhttpd.nim"
+const linux_x64 = "--cpu:amd64 --os:linux -o:srv"
+const windows_x64 = "--cpu:amd64 --os:windows -o:srv.exe"
+const macosx_x64 = "-o:srv"
+const program = "srv"
+const program_file = "src/srv.nim"
 const zip = "zip -X"
 
 proc shell(command, args: string, dest = "") =
   exec command & " " & args & " " & dest
 
 proc filename_for(os: string, arch: string): string =
-  return "nimhttpd" & "_v" & version & "_" & os & "_" & arch & ".zip"
+  return "srv" & "_v" & version & "_" & os & "_" & arch & ".zip"
 
-task windows_x64_build, "Build NimHTTPd for Windows (x64)":
+task windows_x64_build, "Build srv for Windows (x64)":
   shell compile, windows_x64, program_file
 
-task linux_x64_build, "Build NimHTTPd for Linux (x64)":
+task linux_x64_build, "Build srv for Linux (x64)":
   shell compile, linux_x64,  program_file
   
-task macosx_x64_build, "Build NimHTTPd for Mac OS X (x64)":
+task macosx_x64_build, "Build srv for Mac OS X (x64)":
   shell compile, macosx_x64, program_file
 
-task release, "Release NimHTTPd":
+task release, "Release srv":
   echo "\n\n\n WINDOWS - x64:\n\n"
   windows_x64_buildTask()
   shell zip, filename_for("windows", "x64"), program & ".exe"

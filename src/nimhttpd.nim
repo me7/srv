@@ -7,8 +7,7 @@ import
   parseopt,
   strutils,
   uri,
-  browsers,
-  strformat
+  browsers
 
 from httpcore import HttpMethod, HttpHeaders
 
@@ -220,5 +219,5 @@ when isMainModule:
   settings.port = port
 
   serve(settings)
-  openDefaultBrowser(fmt"http://localhost:1337")
+  openDefaultBrowser("http://localhost:1337/$1"%[settings.directory])
   runForever()
