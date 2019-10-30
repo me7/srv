@@ -1,5 +1,4 @@
 nimcache/
-nimhttpd
 srv
 *.zip
 nakefile

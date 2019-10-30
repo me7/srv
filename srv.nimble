@@ -3,12 +3,7 @@ import
 
 template thisModuleFile: string = instantiationInfo(fullPaths = true).filename
 
-when system.fileExists(thisModuleFile.parentDir / "src/srv/config.nim"):
-  # In the git repository the Nimble sources are in a ``src`` directory.
-  import src/srvpkg/config
-else:
-  # When the package is installed, the ``src`` directory disappears.
-  import src/srvpkg/config
+import config
 
 
 # Package
@@ -18,7 +13,6 @@ author        = pkgAuthor
 description   = pkgDescription
 license       = "MIT"
 bin           = @["srv"]
-srcDir        = "src"
 installExt    = @["nim"]
 
 # Dependencies

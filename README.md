@@ -18,5 +18,3 @@ Where:
 
 * _directory_ is the directory to serve (default: current directory).
 * _port_ is the port to listen to (default: 1337).
-
-TODO = make option working

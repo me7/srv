@@ -7,13 +7,12 @@ import
   parseopt,
   strutils,
   uri,
-  browsers
+  browsers,
+  strformat
 
 from httpcore import HttpMethod, HttpHeaders
 
-import
-  srvpkg/config
-
+import config
 
 const 
   name = pkgTitle
@@ -161,6 +160,8 @@ proc serve*(settings: NimHttpSettings) =
   echo "Serving directory ", settings.directory
   asyncCheck server.serve(settings.port, handleHttpRequest, settings.address)
 
+proc toInt(port:Port):int = port.int
+
 when isMainModule:
 
   var port = Port(1337)
@@ -219,5 +220,5 @@ when isMainModule:
   settings.port = port
 
   serve(settings)
-  openDefaultBrowser("http://localhost:1337/$1"%[settings.directory])
+  openDefaultBrowser(fmt"http://localhost:{settings.port.toInt}")
   runForever()
