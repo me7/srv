@@ -21,8 +21,8 @@ const
   description = pkgDescription
   author = pkgAuthor
 
-let usage = """ $1 v$2 - $3
-  (c) 2014-2018 $4
+let usage = fmt""" {name} v{version} - {description}
+  (c) 2014-2018 {author}
 
   Usage:
     srv [-p:port] [directory]
@@ -33,7 +33,7 @@ let usage = """ $1 v$2 - $3
   Options:
     -p, --port     The port to listen to (default: 1337).
     -a, --address  The address to listen to (default: 127.0.0.1).
-""" % [name, version, description, author]
+"""
 
 
 type 
@@ -51,22 +51,22 @@ type
     version*: string
 
 proc h_page(settings:NimHttpSettings, content: string, title=""): string =
-  var footer = """<div id="footer">$1 v$2</div>""" % [settings.name, settings.version]
-  result = """
+  var footer = fmt"""<div id="footer">{settings.name} v{settings.version}</div>"""
+  result = fmt"""
 <!DOCTYPE html>
 <html>
   <head>
-    <title>$1</title>
-    <style type="text/css">$2</style>
+    <title>{title}</title>
+    <style type="text/css">{style}</style>
     <meta charset="UTF-8">
   </head>
   <body>
-    <h1>$1</h1>
-    $3
-    $4
+    <h1>{title}</h1>
+    {content}
+    {footer}
   </body>
 </html>
-  """ % [title, style, content, footer]
+  """
 
 proc relativePath(path, cwd: string): string =
   var path2 = path
@@ -103,6 +103,7 @@ proc sendStaticFile(settings: NimHttpSettings, path: string): NimHttpResponse =
     ext = ".txt"
   ext = ext[1 .. ^1]
   let mimetype = mimes.getMimetype(ext.toLowerAscii)
+  echo mimetype
   var file = path.readFile
   return (code: Http200, content: file, headers: {"Content-Type": mimetype}.newHttpHeaders)
 
@@ -122,11 +123,11 @@ proc sendDirContents(settings: NimHttpSettings, path: string): NimHttpResponse =
       files.add """<li class="i-folder entypo"><a href="$1">$2</a></li>""" % [relpath, name]
     else:
       files.add """<li class="i-file entypo"><a href="$1">$2</a></li>""" % [relpath, name]
-  let ul = """
+  let ul = fmt"""
 <ul>
-  $1
+  {files.join("\n")}
 </ul>
-""" % [files.join("\n")]
+"""
   res = (code: Http200, content: h_page(settings, ul, title), headers: newHttpHeaders())
   return res
 
